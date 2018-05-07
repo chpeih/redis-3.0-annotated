@@ -1,9 +1,20 @@
 sds:
-sdshdr 结构包含了len，free，buff变量
-len为当前使用的长度，free表示空闲空间大小
-buff字符数组
+  sdshdr 结构包含了len，free，buff变量
+  len为当前使用的长度，free表示空闲空间大小
+  buff字符数组
 
-分配内存的策略：当数组长度不够时，如果字符长度小于1M，申请长度为2*use_len+1
-申请内存长度大于1M时，只会额外分配1M的未使用内存，即use_len+1+1M
+  分配内存的策略：当数组长度不够时，如果字符长度小于1M，申请长度为2*use_len+1
+  申请内存长度大于1M时，只会额外分配1M的未使用内存，即use_len+1+1M
 
-sdsjoin存在效率问题，感觉可以优化为预分配长度，在进行copy，
+  sdsjoin存在效率问题，感觉可以优化为预分配长度，在进行copy，
+
+
+hyper loglog:
+  https://blog.csdn.net/firenet1/article/details/77247649
+  https://zhuanlan.zhihu.com/p/26562588
+
+ redis object:
+  EMBSTR: 当redisobj保存的是字符串值，并且ptr指向的内存小于等于39，会创建一个redisembstr编码
+  这个神奇的39的原因是redisObject占用了16个字节，剩下的48个字节：8+8+39+1
+  ，即len+free+39+空字符
+  redisObject 4+4+24+4+（4/8）最后一个取决于操作系统的寻址方式
